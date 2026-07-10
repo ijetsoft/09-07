@@ -51,8 +51,8 @@ app.get('/api/add', async (req, res) => {
     city: String,
     date: Date
   }); */
-  let temperature = 22
-  let city = 'Berlin'
+  let temperature = 33
+  let city = 'Paris'
   let date = new Date()
   
 
