@@ -32,7 +32,6 @@ app.get('/', async (req, res) => {
   try {
     await connectToMongo();
     res.json({
-      ok: true,
       message: '09-07 app is running',
       mongo: mongoose.connection.readyState === 1,
     }); 
