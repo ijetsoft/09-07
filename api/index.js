@@ -1,16 +1,22 @@
+const path = require('path');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const express = require('express');
-const mongoose = require('mongoose');
 const Weather = require('../models/weather');
 
 const app = express();
+app.use(express.static(path.join(__dirname, '..')));
+app.set('view engine', 'pug');
+
 const port = process.env.PORT || 3000;
 
-const DEFAULT_MONGODB_URI = 'mongodb+srv://Vercel-Admin-atlas-purple-nest:admin2026@atlas-purple-nest.bhfdnvi.mongodb.net/?appName=atlas-purple-nest';
-const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
+//const DEFAULT_MONGODB_URI = 'mongodb+srv://Vercel-Admin-atlas-purple-nest:admin2026@atlas-purple-nest.bhfdnvi.mongodb.net/?appName=atlas-purple-nest';
+const MONGODB_URI = process.env.MONGODB_URI //|| DEFAULT_MONGODB_URI;
 
 app.use(express.json());
+app.use(bodyParser.json());
 
 let mongoConnectionPromise = null;
 
@@ -31,10 +37,13 @@ async function connectToMongo() {
 app.get('/', async (req, res) => {
   try {
     await connectToMongo();
-    res.json({
-      message: '09-07 app is running',
+    res.render('home', { title: 'Главная' });
+    //res.send('Express + MongoDB Atlas app is running')
+    /* res.json({
+      ok: true,
+      message: 'Express + MongoDB Atlas app is running',
       mongo: mongoose.connection.readyState === 1,
-    }); 
+    });  */
   } catch (error) {
     res.status(503).json({
       ok: false,
@@ -43,6 +52,10 @@ app.get('/', async (req, res) => {
     });
   }
 });
+app.get('/register', (req, res) => {
+  res.render('register', { title: 'Регистрация', withoutHeader: true });
+});
+
 app.get('/api/add', async (req, res) => {
     
   /* const Weather = mongoose.model('Weather', {
@@ -50,8 +63,8 @@ app.get('/api/add', async (req, res) => {
     city: String,
     date: Date
   }); */
-  let temperature = 33
-  let city = 'Paris'
+  let temperature = 22
+  let city = 'Berlin'
   let date = new Date()
   
 
