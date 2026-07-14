@@ -42,11 +42,12 @@ async function connectToMongo() {
 app.get('/', async (req, res) => {
   try {
     await connectToMongo();
-    res.json({
+    res.render('home', { title: 'Главная' });
+    /* res.json({
       ok: true,
       message: 'Express + MongoDB Atlas app is running',
       mongo: mongoose.connection.readyState === 1,
-    }); 
+    });  */
   } catch (error) {
     res.status(503).json({
       ok: false,
