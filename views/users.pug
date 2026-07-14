@@ -8,7 +8,8 @@ block content
       each user in lst
         li
           strong= user.firstName
+          |  #{user.lastName}
           |  — #{user.email}
-          |   #{user.TIMESTAMP}
+          |   #{user.createdAt}
   else
     p Пользователей нет.

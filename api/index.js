@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const express = require('express');
 const Weather = require('../models/weather');
+const User = require('../models/user');
 
 const app = express();
 app.use(express.static(path.join(__dirname, '..')));
@@ -55,6 +56,92 @@ app.get('/', async (req, res) => {
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Регистрация', withoutHeader: true });
 });
+
+app.post('/api/adduser', async (req, res) => {
+  try {
+    await connectToMongo();
+
+    const { firstName, lastName, email } = req.body;
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ ok: false, message: 'Заполните все поля формы' });
+    }
+
+    const newUser = new User({ firstName, lastName, email });
+    await newUser.save();
+
+    res.status(201).json({ ok: true, message: 'Пользователь зарегистрирован', user: newUser });
+  } catch (error) {
+    console.error('Add user error:', error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({ ok: false, message: 'Пользователь с таким email уже зарегистрирован' });
+    }
+
+    const validationMessages = [];
+    if (error.errors) {
+      Object.values(error.errors).forEach((err) => {
+        if (err && err.message) validationMessages.push(err.message);
+      });
+    }
+
+    res.status(400).json({
+      ok: false,
+      message: validationMessages.length ? validationMessages.join('. ') : error.message || 'Не удалось зарегистрировать пользователя',
+    });
+  }
+});
+  app.get('/listusers', async (req, res) => {
+  try {
+    await connectToMongo();
+
+    const users = await User.find();
+    const totalCount = await User.countDocuments({});
+    const formatDate = (date) => {
+      if (!(date instanceof Date)) {
+        date = new Date(date);
+      }
+      const pad = (value) => String(value).padStart(2, '0');
+      return `${date.getDate()}.${pad(date.getMonth() + 1)}.${pad(date.getFullYear())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    };
+    const lst = users.map((user) => ({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      createdAt: user.createdAt ? formatDate(user.createdAt) : '',
+    }));
+    res.render('users', {
+      title: `Список пользователей (всего ${totalCount})`,
+      totalCount,
+      lst,
+    });
+    //res.json(users);
+    
+    /*const database = parmclient.db('test');
+    const collection = database.collection('users');
+
+    const totalCount = await collection.countDocuments({});
+    const listUsers = await collection.find({}).toArray();
+    const lst = listUsers.map((user) => ({
+      firstName: user.name,
+      email: user.email,
+      TIMESTAMP: '',//user.TIMESTAMP,
+    }));
+
+  //console.log(`form test Всего юзеров: ${totalCount}`);
+    res.render('users', {
+      title: `Список пользователей (всего ${totalCount})`,
+      totalCount,
+      lst,
+    });
+    */
+  } catch (error) {
+    console.error('Ошибка:', error);
+    res.status(500).json({ message: 'Ошибка при получении списка пользователей' });
+  } finally {
+    //await client.close();
+  }
+});
+
 
 app.get('/api/add', async (req, res) => {
     

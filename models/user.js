@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
   // Автоматически добавляет поля createdAt и updatedAt
     timestamps: true, 
 });
-
+/*
 const UserSchemaOLD = new mongoose.Schema(
   {
     name: {
@@ -67,8 +67,8 @@ const UserSchemaOLD = new mongoose.Schema(
     timestamps: true, 
   }
 );
-
+*/
 // ВАЖНО ДЛЯ VERCEL: Проверяем, существует ли уже модель в кэше mongoose.
 // В бессерверной среде файлы могут импортироваться повторно, 
 // и без этой проверки возникнет ошибка "OverwriteModelError".
-module.exports = mongoose.models.User || mongoose.model('User', UserSchema);
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);

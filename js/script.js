@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch('/api/adduser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
