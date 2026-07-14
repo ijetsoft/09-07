@@ -26,6 +26,10 @@ async function connectToMongo() {
     return mongoose.connection;
   }
 
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not defined. Set the MONGODB_URI environment variable (for example in Vercel dashboard or in a local .env file).');
+  }
+
   if (!mongoConnectionPromise) {
     mongoConnectionPromise = mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 5000,
