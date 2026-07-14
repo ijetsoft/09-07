@@ -41,9 +41,9 @@ async function connectToMongo() {
 
 app.get('/', async (req, res) => {
   try {
-    await connectToMongo();
-    // res.render('home', { title: 'Главная' });
-    const users = await User.find();
+    //await connectToMongo();
+     res.render('home', { title: 'Главная' });
+    /*const users = await User.find();
     const totalCount = await User.countDocuments({});
      res.json({
       ok: true,
@@ -51,7 +51,7 @@ app.get('/', async (req, res) => {
       mongo: mongoose.connection.readyState === 1,
       users,
       totalCount
-    });  
+    });  */
   } catch (error) {
     res.status(503).json({
       ok: false,
