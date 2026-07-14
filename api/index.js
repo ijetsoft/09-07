@@ -42,6 +42,22 @@ async function connectToMongo() {
 app.get('/', async (req, res) => {
   try {
     await connectToMongo();
+    res.json({
+      ok: true,
+      message: 'Express + MongoDB Atlas app is running',
+      mongo: mongoose.connection.readyState === 1,
+    }); 
+  } catch (error) {
+    res.status(503).json({
+      ok: false,
+      message: 'MongoDB connection failed',
+      error: error.message,
+    });
+  }
+});
+app.get('/home', async (req, res) => {
+  try {
+    await connectToMongo();
     res.render('home', { title: 'Главная' });
     //res.send('Express + MongoDB Atlas app is running')
     /* res.json({
